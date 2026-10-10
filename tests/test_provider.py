@@ -17,3 +17,18 @@ def test_timeout_is_reported_without_a_review(monkeypatch: pytest.MonkeyPatch) -
     monkeypatch.setattr(httpx, "post", timeout)
     with pytest.raises(ProviderError, match="timed out"):
         GeminiProvider("key", "model").review("diff")
+
+
+def test_connection_error_is_reported_without_a_traceback(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def connection_error(*args: object, **kwargs: object) -> object:
+        raise httpx.ConnectError("connection reset")
+
+    monkeypatch.setattr(httpx, "post", connection_error)
+    with pytest.raises(ProviderError, match="Could not connect to Gemini"):
+        GeminiProvider("key", "model").review("diff")
+
+
+def test_gemini_json_fence_is_unwrapped() -> None:
+    assert GeminiProvider._json_text("```json\n{\"findings\": []}\n```") == '{"findings": []}'

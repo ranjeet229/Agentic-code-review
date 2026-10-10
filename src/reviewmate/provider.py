@@ -31,6 +31,11 @@ class OpenAICompatibleProvider(ModelProvider):
             return ReviewResponse.model_validate(json.loads(content))
         except httpx.TimeoutException as exc:
             raise ProviderError("Model request timed out; no review was produced.") from exc
+        except httpx.RequestError as exc:
+            raise ProviderError(
+                "Could not connect to the model provider; check your network and provider URL. "
+                "No review was produced."
+            ) from exc
         except httpx.HTTPStatusError as exc:
             if exc.response.status_code == 429:
                 raise ProviderError("Model rate limit reached; no review was produced.") from exc
@@ -62,12 +67,28 @@ class GeminiProvider(ModelProvider):
             response = httpx.post(url, params={"key": self.api_key}, json=payload, timeout=60)
             response.raise_for_status()
             content = response.json()["candidates"][0]["content"]["parts"][0]["text"]
-            return ReviewResponse.model_validate(json.loads(content))
+            return ReviewResponse.model_validate(json.loads(self._json_text(content)))
         except httpx.TimeoutException as exc:
             raise ProviderError("Gemini request timed out; no review was produced.") from exc
+        except httpx.RequestError as exc:
+            raise ProviderError(
+                "Could not connect to Gemini; check your network, firewall or proxy, then retry. "
+                "No review was produced."
+            ) from exc
         except httpx.HTTPStatusError as exc:
             if exc.response.status_code == 429:
                 raise ProviderError("Gemini rate limit reached; no review was produced.") from exc
             raise ProviderError(f"Gemini request failed ({exc.response.status_code}); no review was produced.") from exc
         except (IndexError, KeyError, TypeError, ValueError) as exc:
             raise ProviderError("Gemini returned malformed JSON; no review was produced.") from exc
+
+    @staticmethod
+    def _json_text(content: str) -> str:
+        """Accept JSON returned directly or in a Markdown JSON code fence."""
+        text = content.strip()
+        if text.startswith("```"):
+            first_newline = text.find("\n")
+            if first_newline == -1 or not text.endswith("```"):
+                raise ValueError("incomplete Markdown code fence")
+            text = text[first_newline + 1 : -3].strip()
+        return text
