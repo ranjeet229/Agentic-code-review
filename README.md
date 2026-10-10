@@ -10,8 +10,8 @@ Install the published CLI into an existing Python environment:
 
 ```powershell
 pip install reviewmate
-$env:GEMINI_API_KEY = 'THEIR_OWN_GEMINI_KEY'
-$env:GEMINI_MODEL = 'gemini-3.5-flash-lite'
+$env:GEMINI_API_KEY = 'YOUR_GEMINI_KEY'
+$env:GEMINI_MODEL = 'YOUR_GEMINI_MODEL'
 reviewmate review
 ```
 
@@ -22,14 +22,14 @@ python -m venv reviewmate-env
 .\reviewmate-env\Scripts\Activate.ps1
 pip install --upgrade reviewmate
 
-$env:GEMINI_API_KEY = 'THEIR_OWN_GEMINI_KEY'
-$env:GEMINI_MODEL = 'gemini-3.5-flash-lite'
+$env:GEMINI_API_KEY = 'YOUR_GEMINI_KEY'
+$env:GEMINI_MODEL = 'YOUR_GEMINI_MODEL'
 
 cd C:\path\to\their-git-project
 reviewmate review
 ```
 
-Replace `THEIR_OWN_GEMINI_KEY` with a personal Gemini API key. Reviewmate reads the current repository's Git diff; it does not start a server or modify repository files.
+Replace `YOUR_GEMINI_KEY` and `YOUR_GEMINI_MODEL` with your Gemini API key and selected model. Reviewmate reads the current repository's Git diff; it does not start a server or modify repository files.
 
 ### Local development setup
 
