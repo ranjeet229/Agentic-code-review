@@ -1,0 +1,10 @@
+diff --git a/app.py b/app.py
+index 1111111..2222222 100644
+--- a/app.py
++++ b/app.py
+@@ -1,3 +1,4 @@
+ def run():
+-    return 1
++    token = input("token: ")
++    return eval(token)
+ 
