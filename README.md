@@ -4,6 +4,35 @@
 
 ## Setup
 
+### Install from PyPI
+
+Install the published CLI into an existing Python environment:
+
+```powershell
+pip install reviewmate
+$env:GEMINI_API_KEY = 'THEIR_OWN_GEMINI_KEY'
+$env:GEMINI_MODEL = 'gemini-3.5-flash-lite'
+reviewmate review
+```
+
+For an isolated installation (recommended), create a virtual environment and then run Reviewmate from the Git repository you want to inspect:
+
+```powershell
+python -m venv reviewmate-env
+.\reviewmate-env\Scripts\Activate.ps1
+pip install --upgrade reviewmate
+
+$env:GEMINI_API_KEY = 'THEIR_OWN_GEMINI_KEY'
+$env:GEMINI_MODEL = 'gemini-3.5-flash-lite'
+
+cd C:\path\to\their-git-project
+reviewmate review
+```
+
+Replace `THEIR_OWN_GEMINI_KEY` with a personal Gemini API key. Reviewmate reads the current repository's Git diff; it does not start a server or modify repository files.
+
+### Local development setup
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
